@@ -123,83 +123,6 @@ function StatCard({
   );
 }
 
-function GameweekChart({ data }: { data: any[] }) {
-  const chartData = data.map((week) => ({
-    ...week,
-    totalGA: week.goals + week.assists,
-  }));
-
-  return (
-    <Card className="border-0 bg-white/90 shadow-lg backdrop-blur-md">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-xl font-bold text-gray-800">
-          <TrendingUp className="h-5 w-5" />
-          Performance Over Time
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="h-80 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis
-                dataKey="gameweek"
-                stroke="#6b7280"
-                fontSize={12}
-                tickFormatter={(value) => `GW${value}`}
-              />
-              <YAxis stroke="#6b7280" fontSize={12} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                }}
-                formatter={(value: any, name: string) => [
-                  value,
-                  name === "goals"
-                    ? "Goals"
-                    : name === "assists"
-                      ? "Assists"
-                      : name === "totalGA"
-                        ? "Goals + Assists"
-                        : name,
-                ]}
-                labelFormatter={(label) => `Gameweek ${label}`}
-              />
-              <Line
-                type="monotone"
-                dataKey="goals"
-                stroke="#22c55e"
-                strokeWidth={3}
-                dot={{ fill: "#22c55e", strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, stroke: "#22c55e", strokeWidth: 2 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="assists"
-                stroke="#3b82f6"
-                strokeWidth={3}
-                dot={{ fill: "#3b82f6", strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, stroke: "#3b82f6", strokeWidth: 2 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="totalGA"
-                stroke="#8b5cf6"
-                strokeWidth={3}
-                dot={{ fill: "#8b5cf6", strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, stroke: "#8b5cf6", strokeWidth: 2 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
 export default function PlayerPage({ params }: { params: { id: string } }) {
   const player = playerData[params.id as keyof typeof playerData];
 
@@ -284,11 +207,6 @@ export default function PlayerPage({ params }: { params: { id: string } }) {
             color="from-indigo-500 to-blue-600"
             trend={-5}
           />
-        </div>
-
-        {/* Performance Chart */}
-        <div className="mb-8">
-          <GameweekChart data={player.gameweekStats} />
         </div>
 
         {/* Recent Gameweeks */}

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -10,7 +12,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, Trophy } from "lucide-react";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+  DrawerFooter,
+} from "@/components/ui/drawer";
+import {
+  Calendar,
+  Trophy,
+  Plus,
+  Target,
+  TrendingUp,
+  Shield,
+  AlertTriangle,
+  Zap,
+} from "lucide-react";
 import Link from "next/link";
 
 // Test data based on PRD sample
@@ -156,7 +176,6 @@ export default function Home() {
             <h1 className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-3xl font-extrabold text-transparent">
               Top Stats
             </h1>
-            <p className="mt-1 text-sm text-gray-600">League standings for {selectedYear}</p>
           </div>
           <Link href="/gameweeks">
             <Button
@@ -180,11 +199,6 @@ export default function Home() {
           <StatCard title="Red Cards" icon="🟥" data={testData.redCards} />
         </div>
       </main>
-
-      {/* Floating Action Button for Admin */}
-      <button className="fixed bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-2xl transition-all hover:scale-110 hover:shadow-green-500/25">
-        <span className="text-3xl font-light">+</span>
-      </button>
     </div>
   );
 }
