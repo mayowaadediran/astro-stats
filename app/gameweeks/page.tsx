@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -20,15 +22,18 @@ import {
   Award,
   ChevronRight,
   Users,
+  Plus,
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+  DrawerFooter,
 } from "@/components/ui/drawer";
 
 // Test data for gameweeks
@@ -125,6 +130,23 @@ const gameweekNumbers = Object.keys(gameweekData)
   .map(Number)
   .sort((a, b) => b - a);
 
+// Players data for the add stat form
+const playersData = ["Tomi", "Kunle", "Gbaja", "Debo", "Uzo", "Ajegs", "Segun", "Mayowa", "Tobi"];
+
+const eventTypes = [
+  { value: "goal", label: "Goal", icon: "⚽", color: "from-green-500 to-emerald-600" },
+  { value: "assist", label: "Assist", icon: "🎯", color: "from-blue-500 to-cyan-600" },
+  {
+    value: "clean_sheet",
+    label: "Clean Sheet",
+    icon: "🧤",
+    color: "from-purple-500 to-violet-600",
+  },
+  { value: "yellow", label: "Yellow Card", icon: "🟨", color: "from-yellow-500 to-amber-600" },
+  { value: "red", label: "Red Card", icon: "🟥", color: "from-red-500 to-rose-600" },
+  { value: "own_goal", label: "Own Goal", icon: "⚽", color: "from-gray-500 to-slate-600" },
+];
+
 function EventItem({ event, gameweekData }: { event: any; gameweekData: any }) {
   const getEventColor = (type: string) => {
     switch (type) {
@@ -163,8 +185,8 @@ function EventItem({ event, gameweekData }: { event: any; gameweekData: any }) {
   const detailedEvents = gameweekData.detailedEvents?.[event.type] || [];
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>
+    <Drawer>
+      <DrawerTrigger asChild>
         <div className="group flex cursor-pointer items-center justify-between rounded-lg bg-white/80 p-4 backdrop-blur-sm transition-all duration-200 hover:bg-white hover:shadow-md">
           <div className="flex items-center gap-3">
             <div
@@ -184,54 +206,56 @@ function EventItem({ event, gameweekData }: { event: any; gameweekData: any }) {
             <ChevronRight className="h-5 w-5 text-gray-400 transition-colors group-hover:text-gray-600" />
           </div>
         </div>
-      </SheetTrigger>
-      <SheetContent className="w-[400px] sm:w-[540px]">
-        <SheetHeader>
-          <SheetTitle className="flex items-center gap-2 text-xl">
-            <span className="text-2xl">{event.icon}</span>
-            {getEventTitle(event.type)} - Gameweek {gameweekData.number}
-          </SheetTitle>
-          <SheetDescription>
-            Detailed breakdown of all {getEventTitle(event.type).toLowerCase()} for this gameweek
-          </SheetDescription>
-        </SheetHeader>
+      </DrawerTrigger>
+      <DrawerContent className="max-h-[80vh]">
+        <div className="mx-auto w-full max-w-md">
+          <DrawerHeader>
+            <DrawerTitle className="flex items-center gap-2 text-xl">
+              <span className="text-2xl">{event.icon}</span>
+              {getEventTitle(event.type)} - Gameweek {gameweekData.number}
+            </DrawerTitle>
+            <DrawerDescription>
+              Detailed breakdown of all {getEventTitle(event.type).toLowerCase()} for this gameweek
+            </DrawerDescription>
+          </DrawerHeader>
 
-        <div className="mt-6 space-y-4">
-          {detailedEvents.length > 0 ? (
-            detailedEvents.map((detail: any, index: number) => (
-              <div
-                key={`${detail.player}-${index}`}
-                className="group flex items-center justify-between rounded-lg bg-gray-50/50 p-4 transition-all duration-200 hover:bg-gray-100/50"
-                style={{
-                  animationDelay: `${index * 100}ms`,
-                  animation: "fadeInUp 0.5s ease-out forwards",
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-gray-100 to-gray-200">
-                    <span className="text-sm font-medium">👤</span>
+          <div className="max-h-[50vh] space-y-4 overflow-y-scroll px-4 pb-4">
+            {detailedEvents.length > 0 ? (
+              detailedEvents.map((detail: any, index: number) => (
+                <div
+                  key={`${detail.player}-${index}`}
+                  className="group flex items-center justify-between rounded-lg bg-gray-50/50 p-4 transition-all duration-200 hover:bg-gray-100/50"
+                  style={{
+                    animationDelay: `${index * 100}ms`,
+                    animation: "fadeInUp 0.5s ease-out forwards",
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-gray-100 to-gray-200">
+                      <span className="text-sm font-medium">👤</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900">{detail.player}</p>
+                      <p className="text-sm text-gray-600">{detail.time}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">{detail.player}</p>
-                    <p className="text-sm text-gray-600">{detail.time}</p>
+                  <div className="text-right">
+                    <p className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-xl font-bold text-transparent">
+                      {detail.count}
+                    </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-xl font-bold text-transparent">
-                    {detail.count}
-                  </p>
-                </div>
+              ))
+            ) : (
+              <div className="py-8 text-center">
+                <Users className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                <p className="text-gray-600">No detailed data available for this event type.</p>
               </div>
-            ))
-          ) : (
-            <div className="py-8 text-center">
-              <Users className="mx-auto mb-4 h-12 w-12 text-gray-400" />
-              <p className="text-gray-600">No detailed data available for this event type.</p>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </SheetContent>
-    </Sheet>
+      </DrawerContent>
+    </Drawer>
   );
 }
 
@@ -261,6 +285,191 @@ function MVPBadge({ mvp }: { mvp: any }) {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function AddStatDrawer({ currentGameweek }: { currentGameweek: any }) {
+  const [selectedPlayer, setSelectedPlayer] = useState("");
+  const [selectedEventType, setSelectedEventType] = useState("");
+  const [eventCount, setEventCount] = useState("1");
+  const [eventTime, setEventTime] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedPlayer || !selectedEventType) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Reset form
+    setSelectedPlayer("");
+    setSelectedEventType("");
+    setEventCount("1");
+    setEventTime("");
+    setIsSubmitting(false);
+
+    // In a real app, this would update the data and close the drawer
+    console.log("Stat added:", {
+      player: selectedPlayer,
+      gameweek: currentGameweek.number,
+      eventType: selectedEventType,
+      count: eventCount,
+      time: eventTime,
+    });
+  };
+
+  const selectedEvent = eventTypes.find((event) => event.value === selectedEventType);
+
+  return (
+    <Drawer>
+      <DrawerTrigger asChild>
+        <button className="fixed bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-2xl transition-all hover:scale-110 hover:shadow-green-500/25">
+          <Plus className="h-6 w-6" />
+        </button>
+      </DrawerTrigger>
+      <DrawerContent className="flex max-h-[90vh] flex-col">
+        <div className="mx-auto w-full max-w-sm">
+          <DrawerHeader className="flex-shrink-0 pb-2">
+            <DrawerTitle className="flex items-center gap-2 text-xl">
+              <Zap className="h-5 w-5 text-green-500" />
+              Add Stat - Gameweek {currentGameweek.number}
+            </DrawerTitle>
+            <DrawerDescription>
+              Add a new stat entry for a player in gameweek {currentGameweek.number}
+            </DrawerDescription>
+          </DrawerHeader>
+
+          {/* Scrollable Form Content */}
+          <div
+            className="flex-1 overflow-y-scroll px-4 pb-4"
+            style={{ maxHeight: "calc(90vh - 140px)" }}
+          >
+            <form className="space-y-4 pb-6">
+              {/* Player Selection */}
+              <div className="space-y-2">
+                <Label htmlFor="player">Player</Label>
+                <Select value={selectedPlayer} onValueChange={setSelectedPlayer}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a player" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {playersData.map((player) => (
+                      <SelectItem key={player} value={player}>
+                        <div className="flex items-center gap-2">
+                          <span>👤</span>
+                          {player}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Event Type Selection */}
+              <div className="space-y-2">
+                <Label htmlFor="eventType">Event Type</Label>
+                <Select value={selectedEventType} onValueChange={setSelectedEventType}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select event type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {eventTypes.map((event) => (
+                      <SelectItem key={event.value} value={event.value}>
+                        <div className="flex items-center gap-2">
+                          <span>{event.icon}</span>
+                          {event.label}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Event Count */}
+              <div className="space-y-2">
+                <Label htmlFor="count">Count</Label>
+                <Input
+                  id="count"
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={eventCount}
+                  onChange={(e) => setEventCount(e.target.value)}
+                  placeholder="Number of events"
+                />
+              </div>
+
+              {/* Event Time (Optional) */}
+              <div className="space-y-2">
+                <Label htmlFor="time">Time (Optional)</Label>
+                <Input
+                  id="time"
+                  type="text"
+                  value={eventTime}
+                  onChange={(e) => setEventTime(e.target.value)}
+                  placeholder="e.g., 15', 32', 45'"
+                />
+              </div>
+
+              {/* Preview */}
+              {selectedPlayer && selectedEventType && (
+                <div className="rounded-lg bg-gray-50 p-4">
+                  <h4 className="mb-2 font-medium text-gray-900">Preview</h4>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {selectedEvent && (
+                        <div
+                          className={`flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br ${selectedEvent.color} text-white shadow-sm`}
+                        >
+                          <span className="text-sm">{selectedEvent.icon}</span>
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-medium text-gray-900">{selectedPlayer}</p>
+                        <p className="text-sm text-gray-600">
+                          {selectedEvent?.label} {eventTime && `• ${eventTime}`}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-xl font-bold text-green-600">{eventCount}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Extra spacing for better scroll experience */}
+              <div className="h-4"></div>
+            </form>
+          </div>
+
+          {/* Sticky Submit Button */}
+          <div className="sticky bottom-0 mt-auto border-t border-gray-200 bg-white p-4">
+            <Button
+              type="submit"
+              disabled={!selectedPlayer || !selectedEventType || isSubmitting}
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 shadow-lg hover:from-green-600 hover:to-emerald-700"
+              onClick={handleSubmit}
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  Adding Stat...
+                </>
+              ) : (
+                <>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Stat to GW {currentGameweek.number}
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 }
 
@@ -379,6 +588,9 @@ export default function GameweeksPage() {
           </div>
         </div>
       </main>
+
+      {/* Add Stat Drawer */}
+      <AddStatDrawer currentGameweek={currentGameweek} />
     </div>
   );
 }
